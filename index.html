@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="bg-neutral-100">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>角色卡 · 角色主页 H5</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: '#f0a8c4',
+          brandsoft: '#fce4ec',
+          brand2: '#c4a8f0',
+          brand2soft: '#ede4f5',
+          ink: '#2d2d3a',
+          sub: '#9a9aad',
+          line: '#f0e8f0',
+          okgreen: '#e8f5e9',
+          okgreenbd: '#c8e6c9',
+          warnbg: '#fff3e0',
+          warnbd: '#ffe0b2',
+          pastel: '#fdf6f9',
+          pastel2: '#f5f0ff',
+        },
+        borderRadius: { pop: '14px', btn: '10px' },
+        boxShadow: {
+          'soft': '0 2px 16px rgba(240, 168, 196, 0.12)',
+          'soft2': '0 2px 16px rgba(196, 168, 240, 0.12)',
+          'card': '0 2px 12px rgba(45, 45, 58, 0.06)',
+        }
+      },
+    },
+  };
+</script>
+<style>
+  html, body { -webkit-tap-highlight-color: transparent; }
+  body { font-family: "PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif; background: #fdf6f9; }
+  .screen { display: none; }
+  .screen.active { display: flex; }
+  .ph { background:linear-gradient(135deg,#f0e8f0,#e8e0f0); color:#c7b8d0; display:flex; align-items:center; justify-content:center; }
+  .masonry { column-count: 2; column-gap: 10px; }
+  .masonry > * { break-inside: avoid; margin-bottom: 10px; }
+  .no-scrollbar::-webkit-scrollbar { display:none; }
+  .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
+  .fade-in { animation: fadeIn .15s ease; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .sheet-up { animation: sheetUp .22s ease; }
+  @keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  .toast-anim { animation: toastIn .15s ease; }
+  @keyframes toastIn { from{opacity:0; transform:translate(-50%,-46%) scale(.96)} to{opacity:1; transform:translate(-50%,-50%) scale(1)} }
+  /* 二次元简约风装饰元素 */
+  .anime-bg { background: linear-gradient(180deg, #fdf6f9 0%, #f5f0ff 50%, #fdf6f9 100%); }
+  .anime-glow { position: relative; }
+  .anime-glow::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle at 30% 20%, rgba(240,168,196,0.06) 0%, transparent 60%); pointer-events:none; }
+  .anime-dot { background-image: radial-gradient(rgba(196,168,240,0.12) 1px, transparent 1px); background-size: 16px 16px; }
+  .anime-card { background: rgba(255,255,255,0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(240,168,196,0.12); }
+  .anime-btn { background: linear-gradient(135deg, #fce4ec 0%, #ede4f5 100%); transition: all .2s; }
+  .anime-btn:active { transform: scale(.97); opacity: .8; }
+  .anime-btn:disabled { opacity: .45; }
+  .anime-tag { background: linear-gradient(135deg, rgba(240,168,196,0.12), rgba(196,168,240,0.12)); border: 1px solid rgba(240,168,196,0.2); }
+  /* 渐变文本 */
+  .gradient-text { background: linear-gradient(135deg, #f0a8c4, #c4a8f0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  /* 毛玻璃底部导航 */
+  .nav-glass { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(240,168,196,0.1); }
+  /* 软阴影过渡 */
+  .soft-shadow { box-shadow: 0 2px 12px rgba(45,45,58,0.06); }
+  .soft-shadow:hover { box-shadow: 0 4px 20px rgba(240,168,196,0.15); }
+  /* 自定义滚动条 */
+  .overflow-y-auto::-webkit-scrollbar { width: 0; }
+</style>
+</head>
+<body class="min-h-screen flex items-center justify-center py-6 bg-[#fdf6f9]">
+
+    <!-- 手机外框 -->
+    <div class="relative w-[375px] h-[812px] bg-gradient-to-b from-[#fdf6f9] via-[#f5f0ff] to-[#fdf6f9] rounded-[42px] shadow-2xl border-[10px] border-[#2d2d3a] overflow-hidden select-none">
+
+    <!-- 状态栏 -->
+    <div class="absolute top-0 inset-x-0 h-11 z-40 flex items-center justify-between px-6 text-ink text-[13px] font-semibold bg-transparent pointer-events-none">
+      <span>9:41</span>
+      <span class="w-14 h-4 bg-black rounded-full flex items-center justify-end px-0.5"><span class="w-3 h-3 bg-white rounded-full"></span></span>
+      <span class="flex items-center gap-1">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="8" width="2.5" height="4" rx="1"/><rect x="4" y="5" width="2.5" height="7" rx="1"/><rect x="8" y="2.5" width="2.5" height="9.5" rx="1"/><rect x="12" y="0" width="2.5" height="12" rx="1"/></svg>
+        <span class="text-[11px]">5G</span>
+        <svg width="22" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="19" height="10" rx="3" stroke="currentColor" stroke-width="1.2"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg>
+      </span>
+    </div>
+
+    <!-- 屏幕容器 -->
+    <div id="app" class="absolute inset-0 pt-11 flex flex-col">
+
+      <!-- ========== 用户主页 - 角色卡栏（默认入口） ========== -->
+      <section id="screen-userhome" class="screen active flex-col h-full anime-bg">
+        <header class="flex items-center justify-between px-4 h-11 shrink-0">
+          <span class="w-6"></span>
+          <button class="p-1 text-sub hover:text-brand" aria-label="设置">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2" fill="white"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2" fill="white"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="18" r="2" fill="white"/></svg>
+          </button>
+        </header>
+        <div class="flex-1 overflow-y-auto no-scrollbar">
+          <div class="px-4 pt-2">
+            <div class="flex items-start gap-3">
+              <span class="w-16 h-16 rounded-full ph border-2 border-white/60 shadow-soft"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg></span>
+              <div class="flex-1 pt-1">
+                <div class="text-lg font-bold text-ink">石头</div>
+                <div class="text-[11px] text-sub mt-0.5">幸绘号：长度限6-15个字符，仅可使用字母、数字、下划线，平台内不可重复</div>
+                <div class="text-xs text-sub mt-1">填写简介，介绍一下自己吧~</div>
+              </div>
+            </div>
+            <div class="flex gap-8 mt-4 mb-2">
+              <div class="text-center"><div class="text-base font-bold text-ink">111</div><div class="text-xs text-sub">关注</div></div>
+              <div class="text-center"><div class="text-base font-bold text-ink">111</div><div class="text-xs text-sub">粉丝</div></div>
+              <div class="text-center"><div class="text-base font-bold text-ink">111</div><div class="text-xs text-sub">获赞</div></div>
+            </div>
+          </div>
+          <div class="border-t border-line mt-2">
+            <div class="flex gap-4 px-4 pt-3 text-sm">
+              <span class="text-sub">已发布</span><span class="text-sub">草稿箱</span>
+              <span class="font-bold gradient-text pb-1">角色卡</span>
+              <span class="text-sub">赞过</span><span class="text-sub">收藏</span>
+            </div>
+            <div class="flex gap-6 px-4 pt-3 text-sm">
+              <button id="uh-tab-mine" onclick="switchUserHomeTab('mine')" class="font-bold text-ink">我的</button>
+              <button id="uh-tab-lib" onclick="switchUserHomeTab('lib')" class="text-sub">角色库</button>
+            </div>
+          </div>
+          <div id="uh-grid" class="grid grid-cols-3 gap-3 px-4 pt-3 pb-24"></div>
+        </div>
+        <!-- 底部导航 -->
+        <nav class="shrink-0 h-14 border-t border-line flex items-center justify-around text-xs text-sub nav-glass">
+          <span>首页</span><span>作品库</span>
+          <button onclick="track('create_entry_click',{}); showStudio()" class="w-9 h-9 rounded-full bg-gradient-to-br from-[#f0a8c4] to-[#c4a8f0] text-white flex items-center justify-center text-xl -mt-1 shadow-soft">+</button>
+          <span>消息</span><span class="font-bold gradient-text">我的</span>
+        </nav>
+      </section>
+
+      <!-- ========== 工作室（图片选择） ========== -->
+      <section id="screen-studio" class="screen flex-col h-full anime-bg">
+        <header class="flex items-center justify-between px-4 h-11 shrink-0">
+          <button onclick="goBack()" class="p-1 -ml-1 text-ink">&lt;</button>
+          <button onclick="track('studio_upload_album',{}); toast('已从相册选择')" class="flex items-center gap-1 anime-btn text-xs px-3 py-1.5 rounded-full text-ink shadow-soft">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m4 17 5-5 5 5"/></svg>
+            从相册上传
+          </button>
+        </header>
+        <div class="px-4">
+          <div class="text-lg font-bold gradient-text mb-3" id="studio-title">工作室</div>
+          <div class="grid grid-cols-3 gap-3" id="studio-grid"></div>
+        </div>
+        <div class="mt-auto p-6 flex justify-center" id="studio-footer">
+          <button onclick="track('go_create_click',{}); showCreate()" class="px-10 py-2.5 rounded-full anime-btn text-ink font-semibold shadow-soft">去创建</button>
+        </div>
+      </section>
+
+      <!-- ========== 创建角色表单 ========== -->
+      <section id="screen-create" class="screen flex-col h-full anime-bg">
+        <header class="relative flex items-center justify-center px-4 h-11 shrink-0">
+          <button onclick="goBack()" class="absolute left-3 p-1 text-ink">&lt;</button>
+          <span class="font-bold gradient-text">创建角色</span>
+        </header>
+        <p class="text-[11px] text-sub text-center px-6 -mt-1 mb-2">角色基础信息创建后无法修改，可在角色主页增加角色设定</p>
+        <div class="flex-1 overflow-y-auto no-scrollbar px-6 pb-6">
+          <div class="relative w-40 h-40 mx-auto rounded-full bg-gradient-to-br from-[#fce4ec] to-[#ede4f5] mt-2 mb-2 flex items-center justify-center shadow-soft">
+            <button onclick="toast('已从相册选择立绘')" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/80 flex items-center justify-center shadow-soft" aria-label="上传立绘">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m4 17 5-5 5 5"/></svg>
+            </button>
+          </div>
+          <input id="cr-name" oninput="validateCreate()" maxlength="12" placeholder="角色名字" class="block w-full text-center text-base font-semibold text-ink placeholder:text-sub outline-none mb-4 bg-transparent" />
+          <div class="space-y-3 text-sm">
+            <div class="flex items-baseline gap-2">
+              <span class="font-semibold text-ink shrink-0">角色简介：</span>
+              <input id="cr-brief" oninput="validateCreate()" maxlength="20" placeholder="一句话介绍TA" class="flex-1 outline-none placeholder:text-sub text-ink bg-transparent" />
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span class="font-semibold text-ink shrink-0">种族：</span>
+              <input id="cr-race" oninput="validateCreate()" placeholder="猴子" class="flex-1 outline-none placeholder:text-sub text-ink bg-transparent" />
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span class="font-semibold text-ink shrink-0">生日：</span>
+              <input id="cr-birth" placeholder="1月1日" class="flex-1 outline-none placeholder:text-sub text-ink bg-transparent" />
+            </div>
+            <div>
+              <div class="flex items-baseline gap-2">
+                <span class="font-semibold text-ink shrink-0">关于TA：</span>
+                <textarea id="cr-about" oninput="validateCreate()" maxlength="120" rows="3" placeholder="输入角色设定" class="flex-1 outline-none placeholder:text-sub text-ink resize-none bg-transparent"></textarea>
+              </div>
+              <div class="text-right text-[11px] text-sub"><span id="cr-count">0</span>/120</div>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 shrink-0">
+          <button id="cr-save" onclick="submitCreate()" disabled class="w-full py-2.5 rounded-full anime-btn text-ink font-semibold opacity-50 shadow-soft">保存</button>
+        </div>
+      </section>
+
+      <!-- ========== 角色主页（核心） ========== -->
+      <section id="screen-rolehome" class="screen flex-col h-full anime-bg">
+        <header class="absolute top-11 inset-x-0 z-20 flex items-center justify-between px-4 h-11">
+          <button onclick="goBack()" class="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center shadow-soft text-ink">&lt;</button>
+          <button onclick="openShare()" class="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center shadow-soft text-ink text-xl pb-2">…</button>
+        </header>
+        <div class="flex-1 overflow-y-auto no-scrollbar">
+          <!-- 背景大图：点击查看大图，下拉放大 -->
+          <div id="rh-cover" class="ph w-full h-64 origin-top transition-transform duration-200 rounded-b-[20px]" onclick="openImageViewer()" aria-label="角色背景，点击查看大图">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg>
+          </div>
+          <!-- 头像 + 名称 + ID -->
+          <div class="px-4 -mt-8 relative">
+            <div class="flex items-end gap-3">
+              <span class="w-20 h-20 rounded-full bg-gradient-to-br from-[#fce4ec] to-[#ede4f5] border-4 border-white/80 shadow-soft shrink-0"></span>
+              <div class="pb-1 flex-1 border-b border-line">
+                <div class="flex items-center gap-1 text-base font-bold text-ink">
+                  <span id="rh-name">齐天大圣</span>
+                  <button onclick="openShare()" aria-label="编辑"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                  <span class="text-brand">🐒</span>
+                  <span class="text-xs text-sub font-normal">@<span id="rh-author">石头</span></span>
+                </div>
+                <button onclick="copyId()" class="flex items-center gap-1 text-xs text-sub mt-0.5">
+                  ID: <span id="rh-id">ABCDEFGHIJKLM</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+              </div>
+            </div>
+            <!-- 统计数据 -->
+            <div class="flex items-center gap-6 py-3 text-sm">
+              <button onclick="statPop('fans')" class="flex flex-col items-center px-3 py-1.5 rounded-btn anime-tag"><span id="rh-fans" class="font-bold text-ink">111.1万</span> <span class="text-sub text-xs">粉丝</span></button>
+              <button onclick="statPop('co')" class="flex flex-col items-center px-3 py-1.5 rounded-btn anime-tag"><span id="rh-co" class="font-bold text-ink">111.1万</span> <span class="text-sub text-xs">共创数</span></button>
+              <button onclick="statPop('heat')" class="flex flex-col items-center px-3 py-1.5 rounded-btn anime-tag"><span id="rh-heat" class="font-bold text-ink">111.1万</span> <span class="text-sub text-xs">热度</span></button>
+            </div>
+          </div>
+          <!-- Tab -->
+          <div class="flex items-center justify-between px-8 py-2 border-b border-line text-sm bg-white/30">
+            <button id="rh-tab-set" onclick="switchRoleTab('set')" class="text-sub transition-colors">设定</button>
+            <button id="rh-tab-co" onclick="switchRoleTab('co')" class="font-bold text-ink transition-colors">共创<span id="rh-co-count" class="text-xs text-sub">345</span></button>
+            <button id="rh-tab-mine" onclick="switchRoleTab('mine')" class="text-sub transition-colors">我的<span id="rh-mine-count" class="text-xs text-sub">123</span></button>
+          </div>
+          <!-- Tab 内容 -->
+          <div id="rh-tabcontent" class="px-4 py-4 min-h-[240px] pb-4"></div>
+        </div>
+        <!-- 底部固定操作栏 -->
+        <div class="shrink-0 h-16 border-t border-line nav-glass flex items-center px-3 gap-2">
+          <button onclick="toggleLike()" class="flex flex-col items-center w-12">
+            <span id="rh-heart" class="text-2xl leading-none transition-all">❤️</span>
+            <span id="rh-likes" class="text-[10px] text-sub mt-0.5">130000.1万</span>
+          </button>
+          <button onclick="toggleLibrary()" class="flex flex-col items-center w-14">
+            <span id="rh-star" class="text-2xl leading-none transition-all">☆</span>
+            <span id="rh-star-txt" class="text-[10px] text-sub mt-0.5">加入角色库</span>
+          </button>
+          <button onclick="track('publish_page_jump',{}); toast('跳转至发布页')" class="flex-1 py-3 rounded-btn anime-btn text-ink text-sm font-semibold shadow-soft">和TA共创</button>
+          <button id="rh-genbtn" onclick="genImage()" class="flex-1 py-3 rounded-btn anime-btn text-ink text-sm font-semibold shadow-soft">用TA生图</button>
+        </div>
+      </section>
+
+      <!-- ========== 大图查看 ========== -->
+      <section id="screen-imageviewer" class="screen flex-col h-full bg-black">
+        <header class="flex items-center px-4 h-11 shrink-0">
+          <button onclick="goBack()" class="p-1 text-white/80">&lt;</button>
+        </header>
+        <div class="flex-1 flex items-center justify-center">
+          <div class="ph w-72 h-72 rounded-lg"><svg width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg></div>
+        </div>
+        <div class="shrink-0 pb-8 flex justify-center">
+          <button onclick="saveImage()" class="w-11 h-11 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-soft">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========== 弹层根 ========== -->
+    <div id="overlay-root" class="absolute inset-0 z-50 pointer-events-none"></div>
+
+  </div>
+
+  <p class="fixed bottom-2 left-1/2 -translate-x-1/2 text-[11px] text-neutral-400">375px 移动端模拟 · 打开控制台查看埋点日志</p>
+
+<script>
+/* ============================================================
+   全局状态
+============================================================ */
+const state = {
+  role: {
+    id: 'ABCDEFGHIJKLM',
+    name: '齐天大圣',
+    author: '石头',
+    fans: 1111000,
+    co: 1111000,
+    heat: 1111000,
+    likes: 1300001000,
+    liked: false,
+    inLibrary: false,
+    coCreateOpen: true,
+    race: '猴子',
+    birthday: '1月1日',
+    brief: '上天入地无所无能，经历九九八十一难取得真经后养老花果山。',
+    about: '很久很久以前有一个大石头，有一天大石头裂开了，从里面蹦出来一只小猴子。小猴子在花果山肆意地玩耍，他勇敢地穿越了水帘洞，凭借自己的能力和智慧，成为了花果山的猴王，后来自封为齐天大圣。',
+  },
+  coWorks: [
+    { id: 1, title: '标题标题标题标题标题标题标题标题上限20字', author: '我', likes: 111, creator: true, h: 150 },
+    { id: 2, title: '大圣归来 · 花果山之巅', author: '路人甲', likes: 88, creator: false, h: 200 },
+    { id: 3, title: '筋斗云上的日落', author: '画师乙', likes: 233, creator: false, h: 130 },
+    { id: 4, title: '金箍棒的故事', author: '路人丙', likes: 66, creator: false, h: 180 },
+  ],
+  myWorks: [
+    { id: 11, title: '我与大圣的第一次相遇', author: '我', likes: 111, h: 160 },
+    { id: 12, title: '深夜的花果山随笔', author: '我', likes: 42, h: 190 },
+  ],
+  navStack: [],
+  currentScreen: 'screen-userhome',
+  isNewRole: false,
+};
+
+/* ============================================================
+   工具：埋点 / 数值格式化 / Toast / 确认弹窗
+============================================================ */
+function track(ev, params) {
+  console.log('[v0] 埋点:', ev, params || {});
+}
+
+function wan(n) {
+  if (n < 10000) return String(n);
+  let v = (n / 10000).toFixed(1);
+  if (v.endsWith('.0')) v = v.slice(0, -2);
+  return v + '万';
+}
+
+let toastTimer = null;
+function toast(msg, tone) {
+  const root = document.getElementById('overlay-root');
+  const old = document.getElementById('toast-el');
+  if (old) old.remove();
+  const bg = tone === 'plain' ? 'bg-neutral-800/90 backdrop-blur-sm text-white' : 'bg-white/95 backdrop-blur-sm text-ink border border-okgreenbd shadow-soft';
+  const el = document.createElement('div');
+  el.id = 'toast-el';
+  el.className = 'toast-anim pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[240px] px-4 py-3 rounded-pop text-sm text-center shadow-soft ' + bg;
+  el.textContent = msg;
+  root.appendChild(el);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.remove(), 2000);
+}
+
+function closeOverlay(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+/* 确认弹窗：tone = 'green' | 'warn' */
+function confirmDialog({ title, desc, cancelText = '取消', okText = '确认', onOk, tone = 'green' }) {
+  const root = document.getElementById('overlay-root');
+  const box = tone === 'warn' ? 'bg-white/95 backdrop-blur-xl border border-warnbd' : 'bg-white/95 backdrop-blur-xl border border-okgreenbd';
+  const okBtn = tone === 'warn' ? 'bg-white border border-warnbd text-ink' : 'bg-white border border-okgreenbd text-ink';
+  const wrap = document.createElement('div');
+  wrap.id = 'confirm-el';
+  wrap.className = 'fade-in pointer-events-auto absolute inset-0 flex items-center justify-center bg-black/20 px-8';
+  wrap.innerHTML = `
+    <div class="${box} rounded-pop w-full max-w-[280px] px-5 py-5 text-center shadow-soft">
+      <div class="text-[15px] font-semibold text-ink">${title}</div>
+      ${desc ? `<div class="text-xs text-sub mt-2 leading-relaxed">${desc}</div>` : ''}
+      <div class="flex gap-3 mt-5">
+        <button id="cf-cancel" class="flex-1 py-2 rounded-btn bg-white border border-line text-ink text-sm">${cancelText}</button>
+        <button id="cf-ok" class="flex-1 py-2 rounded-btn anime-btn text-sm font-semibold shadow-soft">${okText}</button>
+      </div>
+    </div>`;
+  root.appendChild(wrap);
+  wrap.querySelector('#cf-cancel').onclick = () => closeOverlay('confirm-el');
+  wrap.querySelector('#cf-ok').onclick = () => { closeOverlay('confirm-el'); onOk && onOk(); };
+}
+
+/* 底部操作弹层（长按 / 分享） */
+function bottomSheet(id, innerHTML) {
+  closeOverlay(id);
+  const root = document.getElementById('overlay-root');
+  const wrap = document.createElement('div');
+  wrap.id = id;
+  wrap.className = 'fade-in pointer-events-auto absolute inset-0 bg-black/30';
+  wrap.onclick = (e) => { if (e.target === wrap) closeOverlay(id); };
+  wrap.innerHTML = `<div class="sheet-up absolute bottom-0 inset-x-0 max-h-[85%] overflow-y-auto no-scrollbar bg-white/95 backdrop-blur-xl rounded-t-3xl border-t border-brand/10">${innerHTML}</div>`;
+  root.appendChild(wrap);
+}
+
+/* 长按居中操作弹层（编辑/删除、共创开关等） */
+function actionPopup(id, buttons) {
+  closeOverlay(id);
+  const root = document.getElementById('overlay-root');
+  const wrap = document.createElement('div');
+  wrap.id = id;
+  wrap.className = 'fade-in pointer-events-auto absolute inset-0 flex items-center justify-center bg-black/25 px-16';
+  wrap.onclick = (e) => { if (e.target === wrap) closeOverlay(id); };
+  const btns = buttons.map((b, i) =>
+    `<button data-i="${i}" class="w-full py-3 rounded-btn anime-btn text-sm text-ink shadow-soft">${b.label}</button>`
+  ).join('<div class="h-2"></div>');
+  wrap.innerHTML = `<div class="w-full max-w-[180px] bg-white/60 backdrop-blur-xl p-2 rounded-pop border border-brand/20 shadow-soft">${btns}</div>`;
+  root.appendChild(wrap);
+  wrap.querySelectorAll('button[data-i]').forEach(btn => {
+    btn.onclick = () => { closeOverlay(id); buttons[+btn.dataset.i].onClick(); };
+  });
+}
+
+/* ============================================================
+   屏幕路由
+============================================================ */
+function showScreen(id, opts) {
+  opts = opts || {};
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active', 'fade-in');
+  if (!opts.noPush && state.currentScreen && state.currentScreen !== id) {
+    state.navStack.push(state.currentScreen);
+  }
+  state.currentScreen = id;
+  const scroller = el.querySelector('.overflow-y-auto');
+  if (scroller) scroller.scrollTop = 0;
+}
+
+function goBack() {
+  const prev = state.navStack.pop();
+  showScreen(prev || 'screen-userhome', { noPush: true });
+}
+
+/* ============================================================
+   用户主页 - 角色卡栏
+============================================================ */
+function showUserHome() {
+  showScreen('screen-userhome');
+  switchUserHomeTab('mine');
+}
+let userHomeTab = 'mine';
+function switchUserHomeTab(tab) {
+  userHomeTab = tab;
+  document.getElementById('uh-tab-mine').className = tab === 'mine' ? 'font-bold text-ink' : 'text-sub';
+  document.getElementById('uh-tab-lib').className = tab === 'lib' ? 'font-bold text-ink' : 'text-sub';
+  renderUserHomeGrid();
+}
+function renderUserHomeGrid() {
+  const grid = document.getElementById('uh-grid');
+  const roles = userHomeTab === 'mine'
+    ? [{ ...state.role, coCreating: state.role.coCreateOpen, mine: true }]
+    : [{ ...state.role, mine: false }];
+  let html = roles.map((r, i) => `
+    <div data-i="${i}" class="role-card relative rounded-pop overflow-hidden aspect-[3/4] anime-card soft-shadow transition-all" onclick="track('role_card_click',{name:state.role.name});showRoleHome('用户主页')">
+      <span class="absolute top-1 left-1 text-[10px] flex items-center gap-0.5">❤️<span class="text-ink">130000.1万</span></span>
+      ${r.mine && r.coCreating ? '<span class="absolute top-1 right-1 text-[9px] anime-tag px-1 rounded text-ink">共创中</span>' : ''}
+      <div class="absolute bottom-0 inset-x-0 p-1.5 bg-white/60 backdrop-blur-sm">
+        <div class="text-xs font-bold text-ink truncate">${r.name}</div>
+        <div class="text-[9px] text-sub truncate">金箍棒代言人，玉帝老儿小福星</div>
+      </div>
+    </div>`).join('');
+  // 「去创建」占位卡（仅我的）
+  if (userHomeTab === 'mine') {
+    html += `<button onclick="track('create_entry_click',{}); showStudio()" class="rounded-pop border-2 border-dashed border-brand/40 aspect-[3/4] flex flex-col items-center justify-center text-brand text-3xl bg-white/30 anime-card">+<span class="text-xs mt-1">去创建</span></button>`;
+  }
+  grid.innerHTML = html;
+  // 长按绑定
+  grid.querySelectorAll('.role-card').forEach(card => {
+    bindLongPress(card, () => {
+      if (userHomeTab === 'mine') {
+        actionPopup('lp-role', [
+          {
+            label: state.role.coCreateOpen ? '关闭角色共创' : '开启角色共创',
+            onClick: () => toggleCoCreate()
+          },
+          { label: '移除角色', onClick: () => removeRoleConfirm() },
+        ]);
+      } else {
+        actionPopup('lp-role', [
+          { label: '移出角色库', onClick: () => toggleLibrary() },
+        ]);
+      }
+    });
+  });
+}
+
+function toggleCoCreate() {
+  if (state.role.coCreateOpen) {
+    confirmDialog({
+      title: '确认要关闭角色共创吗',
+      desc: '关闭后，角色部分功能将限制，原有角色共创内容保留',
+      okText: '确认关闭',
+      tone: 'warn',
+      onOk: () => {
+        state.role.coCreateOpen = false;
+        track('role_co_create_toggle', { status: 'off' });
+        toast('已关闭角色共创');
+        renderUserHomeGrid();
+        applyGenButton();
+      }
+    });
+  } else {
+    state.role.coCreateOpen = true;
+    track('role_co_create_toggle', { status: 'on' });
+    toast('已开启角色共创');
+    renderUserHomeGrid();
+    applyGenButton();
+  }
+}
+
+function removeRoleConfirm() {
+  confirmDialog({
+    title: '确认要移除角色吗',
+    desc: '已移除角色无法收回',
+    okText: '确认移除',
+    tone: 'warn',
+    onOk: () => { track('role_remove', {}); toast('已移除角色'); }
+  });
+}
+
+/* ============================================================
+   工作室 & 创建角色
+============================================================ */
+function showStudio() {
+  showScreen('screen-studio');
+  const grid = document.getElementById('studio-grid');
+  grid.innerHTML = Array.from({ length: 6 }).map(() =>
+    `<button onclick="track('studio_pick_image',{}); showCreate()" class="ph aspect-square rounded-pop soft-shadow"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg></button>`
+  ).join('');
+}
+function showCreate() {
+  showScreen('screen-create');
+  track('role_create_click', {});
+}
+function validateCreate() {
+  const name = document.getElementById('cr-name').value.trim();
+  const brief = document.getElementById('cr-brief').value.trim();
+  const about = document.getElementById('cr-about').value;
+  document.getElementById('cr-count').textContent = about.length;
+  const ok = name.length > 0 && brief.length >= 1 && brief.length <= 20 && about.length <= 120;
+  const btn = document.getElementById('cr-save');
+  btn.disabled = !ok;
+  btn.classList.toggle('opacity-50', !ok);
+}
+function submitCreate() {
+  const name = document.getElementById('cr-name').value.trim();
+  const brief = document.getElementById('cr-brief').value.trim();
+  const race = document.getElementById('cr-race').value.trim() || '猴子';
+  const birth = document.getElementById('cr-birth').value.trim() || '1月1日';
+  const about = document.getElementById('cr-about').value.trim();
+  if (!name || brief.length < 1) { track('role_create_fail', { reason: 'invalid' }); return; }
+  Object.assign(state.role, {
+    name, brief, race, birthday: birth, about,
+    fans: 0, co: 0, heat: 0, likes: 0, liked: false, inLibrary: false, coCreateOpen: true,
+  });
+  state.isNewRole = true;
+  track('role_create_success', { name });
+  toast('角色创建成功');
+  showRoleHome('创建角色');
+}
+
+/* ============================================================
+   角色主页
+============================================================ */
+let roleTab = 'co';
+function showRoleHome(source) {
+  track('role_home_view', { role_id: state.role.id, source: source || '' });
+  syncRoleHome();
+  showScreen('screen-rolehome');
+  switchRoleTab(state.isNewRole ? 'co' : 'co');
+}
+function syncRoleHome() {
+  document.getElementById('rh-name').textContent = state.role.name;
+  document.getElementById('rh-author').textContent = state.role.author;
+  document.getElementById('rh-id').textContent = state.role.id;
+  document.getElementById('rh-fans').textContent = wan(state.role.fans);
+  document.getElementById('rh-co').textContent = wan(state.role.co);
+  document.getElementById('rh-heat').textContent = wan(state.role.heat);
+  document.getElementById('rh-likes').textContent = wan(state.role.likes);
+  document.getElementById('rh-co-count').textContent = state.isNewRole ? state.coWorks.length : 345;
+  document.getElementById('rh-mine-count').textContent = state.isNewRole ? state.myWorks.length : 123;
+  applyLike();
+  applyLibrary();
+  applyGenButton();
+}
+function switchRoleTab(tab) {
+  roleTab = tab;
+  const map = { set: 'rh-tab-set', co: 'rh-tab-co', mine: 'rh-tab-mine' };
+  Object.entries(map).forEach(([k, id]) => {
+    document.getElementById(id).className = k === tab ? 'font-bold text-ink' : 'text-sub';
+  });
+  // 数量小字重新附加
+  const coCount = state.isNewRole ? state.coWorks.length : 345;
+  const mineCount = state.isNewRole ? state.myWorks.length : 123;
+  document.getElementById('rh-tab-co').innerHTML = '共创<span id="rh-co-count" class="text-xs text-sub">' + coCount + '</span>';
+  document.getElementById('rh-tab-mine').innerHTML = '我的<span id="rh-mine-count" class="text-xs text-sub">' + mineCount + '</span>';
+  document.getElementById('rh-tab-co').className = tab === 'co' ? 'font-bold text-ink' : 'text-sub';
+  document.getElementById('rh-tab-mine').className = tab === 'mine' ? 'font-bold text-ink' : 'text-sub';
+  document.getElementById('rh-tab-co').onclick = () => switchRoleTab('co');
+  document.getElementById('rh-tab-mine').onclick = () => switchRoleTab('mine');
+  renderRoleTabContent();
+}
+function renderRoleTabContent() {
+  const box = document.getElementById('rh-tabcontent');
+  if (roleTab === 'set') {
+    box.innerHTML = `
+      <p class="text-sm font-bold text-ink leading-relaxed mb-3">${state.role.brief}</p>
+      <div class="space-y-2 text-sm text-ink">
+        <div><span class="text-sub">姓名：</span>${state.role.name}</div>
+        <div><span class="text-sub">种族：</span>${state.role.race} <span class="text-brand">🐒</span></div>
+        <div><span class="text-sub">生日：</span>${state.role.birthday}</div>
+        <div class="flex"><span class="text-sub shrink-0">关于TA：</span><span class="leading-relaxed">${state.role.about}</span></div>
+      </div>`;
+    return;
+  }
+  const works = roleTab === 'co' ? state.coWorks : state.myWorks;
+  if (!works.length) {
+    if (roleTab === 'co') {
+      box.innerHTML = `
+        <div class="flex flex-col items-center pt-8 text-center">
+          <p class="text-sm text-sub mb-4">角色暂无共创内容</p>
+          <button onclick="openShare()" class="px-6 py-2 rounded-btn anime-btn text-sm text-ink shadow-soft">去邀请</button>
+          <div class="text-brand text-xl my-2">↓</div>
+          <p class="text-xs text-green-600">点击效果同右上角转发键</p>
+        </div>`;
+    } else {
+      box.innerHTML = `<div class="flex flex-col items-center pt-16 text-center"><p class="text-sm text-sub">还没有我和TA的故事呢</p></div>`;
+    }
+    return;
+  }
+  box.innerHTML = `<div class="masonry">` + works.map(w => `
+    <div class="work-item rounded-pop overflow-hidden anime-card soft-shadow transition-all" data-id="${w.id}">
+      <div class="ph w-full relative" style="height:${w.h}px">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg>
+        ${w.creator ? '<span class="absolute top-1 right-1 text-[10px] bg-gradient-to-r from-[#f0a8c4] to-[#c4a8f0] text-white px-1.5 py-0.5 rounded">创作者</span>' : ''}
+      </div>
+      <div class="p-2 bg-white/40">
+        <div class="text-xs text-ink leading-snug line-clamp-2">${w.title}</div>
+        <div class="flex items-center justify-between mt-1 text-[11px] text-sub">
+          <span class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-gradient-to-br from-[#fce4ec] to-[#ede4f5] inline-block"></span>${w.author}</span>
+          <span>♡ ${w.likes}</span>
+        </div>
+      </div>
+    </div>`).join('') + `</div>`;
+  // 我的 Tab 长按编辑/删除
+  if (roleTab === 'mine') {
+    box.querySelectorAll('.work-item').forEach(item => {
+      bindLongPress(item, () => {
+        actionPopup('lp-work', [
+          { label: '编辑', onClick: () => { track('work_edit', { id: item.dataset.id }); toast('进入编辑'); } },
+          { label: '删除', onClick: () => deleteWork(+item.dataset.id) },
+        ]);
+      });
+    });
+  }
+}
+function deleteWork(id) {
+  confirmDialog({
+    title: '确认删除该作品吗', desc: '删除后无法恢复', okText: '确认删除', tone: 'warn',
+    onOk: () => {
+      state.myWorks = state.myWorks.filter(w => w.id !== id);
+      track('work_delete', { id });
+      toast('已删除');
+      syncRoleHome();
+      renderRoleTabContent();
+    }
+  });
+}
+
+/* 顶部统计弹窗 */
+function statPop(type) {
+  const name = state.role.name;
+  if (type === 'fans') { track('stat_fans_click', {}); toast(`${wan(state.role.fans)}粉丝关注了"${name}"`); }
+  if (type === 'co') { track('stat_co_click', {}); toast(`${wan(state.role.co)}共创作品`); }
+  if (type === 'heat') { track('stat_heat_click', {}); toast(`"${name}"累计获得${wan(state.role.heat)}热度（热度=点赞+收藏+评论+转发+角色库加入数+角色卡点赞）`); }
+}
+
+/* 复制 ID */
+function copyId() {
+  track('role_id_copy', {});
+  if (navigator.clipboard) navigator.clipboard.writeText(state.role.id).catch(() => {});
+  toast('复制成功');
+}
+
+/* 点赞 */
+function toggleLike() {
+  state.role.liked = !state.role.liked;
+  state.role.likes += state.role.liked ? 1 : -1;
+  track('role_like', { liked: state.role.liked });
+  applyLike();
+}
+function applyLike() {
+  document.getElementById('rh-heart').textContent = state.role.liked ? '❤️' : '🤍';
+  document.getElementById('rh-likes').textContent = wan(state.role.likes);
+}
+
+/* 加入/移出角色库 */
+function toggleLibrary() {
+  if (!state.role.inLibrary) {
+    state.role.inLibrary = true;
+    track('role_follow', { is_follow: true });
+    toast('已加入角色库');
+    applyLibrary();
+  } else {
+    confirmDialog({
+      title: `确认要将"${state.role.name}"移出角色库吗`,
+      desc: '角色移出后无法及时收到动态',
+      okText: '确认移出',
+      tone: 'green',
+      onOk: () => {
+        state.role.inLibrary = false;
+        track('role_follow', { is_follow: false });
+        toast('已移出角色库');
+        applyLibrary();
+        renderUserHomeGrid();
+      }
+    });
+  }
+}
+function applyLibrary() {
+  document.getElementById('rh-star').textContent = state.role.inLibrary ? '⭐' : '☆';
+  document.getElementById('rh-star-txt').textContent = state.role.inLibrary ? '已在角色库' : '加入角色库';
+}
+
+/* 用 TA 生图 / 共创关闭置灰 */
+function applyGenButton() {
+  const btn = document.getElementById('rh-genbtn');
+  if (state.role.coCreateOpen) {
+    btn.textContent = '用TA生图';
+    btn.disabled = false;
+    btn.className = 'flex-1 py-3 rounded-btn anime-btn text-ink text-sm font-semibold shadow-soft';
+  } else {
+    btn.textContent = '暂不支持共创';
+    btn.disabled = true;
+    btn.className = 'flex-1 py-3 rounded-btn bg-neutral-200/60 text-sub text-sm font-semibold';
+  }
+}
+function genImage() {
+  if (!state.role.coCreateOpen) return;
+  track('role_gen_image', { role_id: state.role.id });
+  toast('跳转画布并带入角色立绘');
+}
+
+/* ============================================================
+   分享弹窗
+============================================================ */
+function openShare() {
+  track('role_share_open', {});
+  const chan = ['抖音', '微信好友', '朋友圈', 'QQ好友', 'QQ空间'];
+  const chanHtml = chan.map(c => `
+    <button onclick="track('share_channel',{ch:'${c}'});toast('已分享到${c}')" class="flex flex-col items-center gap-1">
+      <span class="w-11 h-11 rounded-full ph shadow-soft"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg></span>
+      <span class="text-[11px] text-sub">${c}</span>
+    </button>`).join('');
+  const actions = [
+    { icon: '🔗', label: '复制链接', fn: `track('share_copy_link',{});toast('已复制链接')` },
+    { icon: '⬇', label: '保存分享图', fn: `track('share_save_image',{});saveShareImage()` },
+    { icon: '✎', label: '修改设定', fn: `closeOverlay('share-sheet');track('edit_setting',{});showCreate()` },
+    { icon: '🖼', label: '编辑封面', fn: `closeOverlay('share-sheet');track('edit_cover',{});showStudioForCover()` },
+    { icon: '⚠', label: '举报', fn: `track('report',{});toast('已提交举报','plain')` },
+  ];
+  const actHtml = actions.map(a => `
+    <button onclick="${a.fn}" class="flex flex-col items-center gap-1">
+      <span class="w-11 h-11 rounded-full bg-gradient-to-br from-[#fce4ec] to-[#ede4f5] flex items-center justify-center text-lg shadow-soft">${a.icon}</span>
+      <span class="text-[11px] text-sub">${a.label}</span>
+    </button>`).join('');
+  bottomSheet('share-sheet', `
+    <div class="pt-4 pb-6">
+      <div class="text-center text-sm font-semibold text-ink mb-4">分享到</div>
+      <div class="flex justify-around px-4 mb-5">${chanHtml}</div>
+      <div class="flex justify-around px-4 mb-2">${actHtml}</div>
+      <div class="px-4 mt-4">
+        <button onclick="closeOverlay('share-sheet')" class="w-full py-3 rounded-full anime-btn text-ink text-sm shadow-soft">取消</button>
+      </div>
+    </div>`);
+}
+function saveShareImage() {
+  closeOverlay('share-sheet');
+  if (!hasAlbumPermission) { permissionDialog(); return; }
+  track('role_cover_save', { result: 'success' });
+  toast('已保存至相册');
+}
+function showStudioForCover() {
+  showStudio();
+  document.getElementById('studio-title').textContent = '工作室 · 编辑封面';
+}
+
+/* ============================================================
+   背景大图查看 + 保存 + 下拉放大
+============================================================ */
+let hasAlbumPermission = true;
+function openImageViewer() {
+  track('role_cover_view', {});
+  showScreen('screen-imageviewer');
+}
+function saveImage() {
+  if (!hasAlbumPermission) { permissionDialog(); return; }
+  track('role_cover_save', { result: 'success' });
+  toast('已保存至相册');
+}
+function permissionDialog() {
+  track('role_cover_save', { result: 'fail' });
+  confirmDialog({ title: '请开启相册权限', desc: '需要相册权限才能保存图片', cancelText: '取消', okText: '去开启', tone: 'green', onOk: () => { hasAlbumPermission = true; toast('权限已开启'); } });
+}
+/* 背景下拉放大（下拉至原图一半上限，即 1.5x） */
+(function initCoverZoom() {
+  const cover = document.getElementById('rh-cover');
+  let startY = 0, active = false;
+  cover.addEventListener('touchstart', e => { startY = e.touches[0].clientY; active = true; }, { passive: true });
+  cover.addEventListener('touchmove', e => {
+    if (!active) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy > 0) {
+      const scale = Math.min(1.5, 1 + dy / 400);
+      cover.style.transform = `scale(${scale})`;
+    }
+  }, { passive: true });
+  cover.addEventListener('touchend', () => { active = false; cover.style.transform = 'scale(1)'; });
+})();
+
+/* ============================================================
+   长按识别
+============================================================ */
+function bindLongPress(el, cb) {
+  let timer = null;
+  const start = () => { timer = setTimeout(() => { track('long_press', {}); cb(); }, 500); };
+  const cancel = () => clearTimeout(timer);
+  el.addEventListener('touchstart', start, { passive: true });
+  el.addEventListener('touchend', cancel);
+  el.addEventListener('touchmove', cancel, { passive: true });
+  el.addEventListener('mousedown', start);
+  el.addEventListener('mouseup', cancel);
+  el.addEventListener('mouseleave', cancel);
+  el.addEventListener('contextmenu', e => e.preventDefault());
+}
+
+/* ============================================================
+   初始化
+============================================================ */
+showUserHome();
+console.log('[v0] 应用已加载 · 从「用户主页」开始');
+</script>
+</body>
+</html>
