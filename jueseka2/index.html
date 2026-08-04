@@ -71,10 +71,10 @@
   .overflow-y-auto::-webkit-scrollbar { width: 0; }
 </style>
 </head>
-<body class="min-h-screen flex items-center justify-center py-6 bg-[#fdf6f9]">
+<body class="min-h-screen flex items-center justify-center py-4 px-2 bg-[#fdf6f9]">
 
     <!-- 手机外框 -->
-    <div class="relative w-[375px] h-[812px] bg-gradient-to-b from-[#fdf6f9] via-[#f5f0ff] to-[#fdf6f9] rounded-[42px] shadow-2xl border-[10px] border-[#2d2d3a] overflow-hidden select-none">
+    <div class="relative w-[375px] max-w-full h-[812px] max-h-[calc(100vh-2rem)] bg-gradient-to-b from-[#fdf6f9] via-[#f5f0ff] to-[#fdf6f9] rounded-[42px] shadow-2xl border-[10px] border-[#2d2d3a] select-none">
 
     <!-- 状态栏 -->
     <div class="absolute top-0 inset-x-0 h-11 z-40 flex items-center justify-between px-6 text-ink text-[13px] font-semibold bg-transparent pointer-events-none">
@@ -88,7 +88,7 @@
     </div>
 
     <!-- 屏幕容器 -->
-    <div id="app" class="absolute inset-0 pt-11 flex flex-col">
+    <div id="app" class="absolute inset-0 pt-11 flex flex-col overflow-hidden">
 
       <!-- ========== 用户主页 - 角色卡栏（默认入口） ========== -->
       <section id="screen-userhome" class="screen active flex-col h-full anime-bg">
@@ -130,7 +130,7 @@
         <!-- 底部导航 -->
         <nav class="shrink-0 h-14 border-t border-line flex items-center justify-around text-xs text-sub nav-glass">
           <span>首页</span><span>作品库</span>
-          <button onclick="track('create_entry_click',{}); showStudio()" class="w-9 h-9 rounded-full bg-gradient-to-br from-[#f0a8c4] to-[#c4a8f0] text-white flex items-center justify-center text-xl -mt-1 shadow-soft">+</button>
+          <button onclick="track('create_entry_click',{}); showCreate()" class="w-9 h-9 rounded-full bg-gradient-to-br from-[#f0a8c4] to-[#c4a8f0] text-white flex items-center justify-center text-xl -mt-1 shadow-soft">+</button>
           <span>消息</span><span class="font-bold gradient-text">我的</span>
         </nav>
       </section>
@@ -159,33 +159,74 @@
           <button onclick="goBack()" class="absolute left-3 p-1 text-ink">&lt;</button>
           <span class="font-bold gradient-text">创建角色</span>
         </header>
-        <p class="text-[11px] text-sub text-center px-6 -mt-1 mb-2">角色基础信息创建后无法修改，可在角色主页增加角色设定</p>
         <div class="flex-1 overflow-y-auto no-scrollbar px-6 pb-6">
           <div class="relative w-40 h-40 mx-auto rounded-full bg-gradient-to-br from-[#fce4ec] to-[#ede4f5] mt-2 mb-2 flex items-center justify-center shadow-soft">
-            <button onclick="toast('已从相册选择立绘')" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/80 flex items-center justify-center shadow-soft" aria-label="上传立绘">
+            <button onclick="showStudioForAvatar()" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/80 flex items-center justify-center shadow-soft" aria-label="上传立绘">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m4 17 5-5 5 5"/></svg>
             </button>
           </div>
           <input id="cr-name" oninput="validateCreate()" maxlength="12" placeholder="角色名字" class="block w-full text-center text-base font-semibold text-ink placeholder:text-sub outline-none mb-4 bg-transparent" />
           <div class="space-y-3 text-sm">
-            <div class="flex items-baseline gap-2">
-              <span class="font-semibold text-ink shrink-0">角色简介：</span>
-              <input id="cr-brief" oninput="validateCreate()" maxlength="20" placeholder="一句话介绍TA" class="flex-1 outline-none placeholder:text-sub text-ink bg-transparent" />
-            </div>
-            <div class="flex items-baseline gap-2">
-              <span class="font-semibold text-ink shrink-0">种族：</span>
-              <input id="cr-race" oninput="validateCreate()" placeholder="猴子" class="flex-1 outline-none placeholder:text-sub text-ink bg-transparent" />
-            </div>
-            <div class="flex items-baseline gap-2">
-              <span class="font-semibold text-ink shrink-0">生日：</span>
-              <input id="cr-birth" placeholder="1月1日" class="flex-1 outline-none placeholder:text-sub text-ink bg-transparent" />
+            <div>
+              <div class="flex items-baseline gap-2">
+                <span class="font-semibold text-ink shrink-0">角色简介：</span>
+              </div>
+              <textarea id="cr-brief" oninput="validateCreate()" maxlength="100" rows="2" placeholder="一句话介绍TA，或描述角色的外貌、性格等" class="w-full mt-1 outline-none placeholder:text-sub text-ink resize-none bg-transparent text-sm"></textarea>
             </div>
             <div>
               <div class="flex items-baseline gap-2">
-                <span class="font-semibold text-ink shrink-0">关于TA：</span>
-                <textarea id="cr-about" oninput="validateCreate()" maxlength="120" rows="3" placeholder="输入角色设定" class="flex-1 outline-none placeholder:text-sub text-ink resize-none bg-transparent"></textarea>
+                <span class="font-semibold text-ink shrink-0">设定：</span>
               </div>
-              <div class="text-right text-[11px] text-sub"><span id="cr-count">0</span>/120</div>
+              <textarea id="cr-about" oninput="validateCreate()" maxlength="200" rows="5" placeholder="详细描述角色的背景、性格、外貌、种族、生日、故事等设定…" class="w-full mt-1 outline-none placeholder:text-sub text-ink resize-none bg-transparent text-sm"></textarea>
+              <div class="text-right text-[11px] text-sub"><span id="cr-count">0</span>/200</div>
+            </div>
+          </div>
+
+          <!-- 角色形象图 -->
+          <div class="mt-5">
+            <div class="flex items-baseline justify-between">
+              <span class="font-semibold text-ink text-sm">角色形象图 <span class="text-sub text-xs font-normal" id="cr-img-count">0</span>/5</span>
+            </div>
+            <div class="text-[11px] text-sub mt-0.5">可上传图片或视频，视频时长不超过15s</div>
+            <div id="cr-imgs" class="grid grid-cols-3 gap-2 mt-2"></div>
+          </div>
+
+          <!-- 人设三视图 -->
+          <div class="mt-5">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-ink text-sm">人设三视图</span>
+            </div>
+            <div onclick="showStudioForSancan()" class="mt-2 rounded-pop border-2 border-dashed border-brand/40 aspect-[16/9] flex flex-col items-center justify-center text-brand bg-white/30 cursor-pointer">
+              <div class="text-2xl">+</div>
+              <span class="text-xs mt-1 text-sub">点击上传三视图</span>
+            </div>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-[11px] text-sub">由幸绘AI生成角色三视图</span>
+              <button onclick="toast('正在生成三视图...')" class="text-brand text-xs anime-tag px-2 py-1 rounded">去生成</button>
+            </div>
+          </div>
+
+          <!-- 开启角色创作 / 设为隐私角色 -->
+          <div class="mt-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-semibold text-ink text-sm">开启角色创作</span>
+                <span class="text-sub text-[11px] ml-2">开启后角色可以与其他角色共创</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="cr-cocreate" class="sr-only peer" checked>
+                <div class="w-11 h-6 rounded-full bg-neutral-200 peer-checked:bg-gradient-to-r peer-checked:from-[#f0a8c4] peer-checked:to-[#c4a8f0] transition-colors relative after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5"></div>
+              </label>
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-semibold text-ink text-sm">设为隐私角色</span>
+                <span class="text-sub text-[11px] ml-2">角色仅对你可见</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="cr-private" class="sr-only peer">
+                <div class="w-11 h-6 rounded-full bg-neutral-200 peer-checked:bg-gradient-to-r peer-checked:from-[#f0a8c4] peer-checked:to-[#c4a8f0] transition-colors relative after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5"></div>
+              </label>
             </div>
           </div>
         </div>
@@ -201,9 +242,19 @@
           <button onclick="openShare()" class="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center shadow-soft text-ink text-xl pb-2">…</button>
         </header>
         <div class="flex-1 overflow-y-auto no-scrollbar">
-          <!-- 背景大图：点击查看大图，下拉放大 -->
-          <div id="rh-cover" class="ph w-full h-64 origin-top transition-transform duration-200 rounded-b-[20px]" onclick="openImageViewer()" aria-label="角色背景，点击查看大图">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg>
+          <!-- 背景大图轮播：左右滑动切换，点击查看大图，下拉放大 -->
+          <div id="rh-cover-wrap" class="w-full h-64 overflow-hidden rounded-b-[20px] origin-top transition-transform duration-200 relative">
+            <div id="rh-cover-track" class="flex w-full h-full" style="transition: transform 0.2s ease;">
+              <div class="ph w-full h-full shrink-0" onclick="openImageViewer()" aria-label="角色背景1"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg></div>
+              <div class="ph w-full h-full shrink-0" onclick="openImageViewer()" aria-label="角色背景2"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg></div>
+              <div class="ph w-full h-full shrink-0" onclick="openImageViewer()" aria-label="角色背景3"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg></div>
+            </div>
+            <!-- 轮播指示器 -->
+            <div class="flex justify-center gap-1.5 absolute bottom-2 inset-x-0 z-10" id="rh-dots">
+              <span class="w-1.5 h-1.5 rounded-full bg-white/80 transition-all"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-white/40 transition-all"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-white/40 transition-all"></span>
+            </div>
           </div>
           <!-- 头像 + 名称 + ID -->
           <div class="px-4 -mt-8 relative">
@@ -225,15 +276,19 @@
             <!-- 统计数据 -->
             <div class="flex items-center gap-6 py-3 text-sm">
               <button onclick="statPop('fans')" class="flex flex-col items-center px-3 py-1.5 rounded-btn anime-tag"><span id="rh-fans" class="font-bold text-ink">111.1万</span> <span class="text-sub text-xs">粉丝</span></button>
-              <button onclick="statPop('co')" class="flex flex-col items-center px-3 py-1.5 rounded-btn anime-tag"><span id="rh-co" class="font-bold text-ink">111.1万</span> <span class="text-sub text-xs">共创数</span></button>
+              <button onclick="statPop('co')" class="flex flex-col items-center px-3 py-1.5 rounded-btn anime-tag"><span id="rh-co" class="font-bold text-ink">111.1万</span> <span class="text-sub text-xs">创作数</span></button>
               <button onclick="statPop('heat')" class="flex flex-col items-center px-3 py-1.5 rounded-btn anime-tag"><span id="rh-heat" class="font-bold text-ink">111.1万</span> <span class="text-sub text-xs">热度</span></button>
             </div>
           </div>
-          <!-- Tab -->
-          <div class="flex items-center justify-between px-8 py-2 border-b border-line text-sm bg-white/30">
-            <button id="rh-tab-set" onclick="switchRoleTab('set')" class="text-sub transition-colors">设定</button>
-            <button id="rh-tab-co" onclick="switchRoleTab('co')" class="font-bold text-ink transition-colors">共创<span id="rh-co-count" class="text-xs text-sub">345</span></button>
-            <button id="rh-tab-mine" onclick="switchRoleTab('mine')" class="text-sub transition-colors">我的<span id="rh-mine-count" class="text-xs text-sub">123</span></button>
+          <!-- Tab：设定 / 创作 -->
+          <div class="flex items-center px-8 py-2 border-b border-line text-sm bg-white/30">
+            <button id="rh-tab-set" onclick="switchRoleTab('set')" class="flex-1 text-sub transition-colors">设定</button>
+            <button id="rh-tab-co" onclick="switchRoleTab('co')" class="flex-1 font-bold text-ink transition-colors">创作</button>
+          </div>
+          <!-- 创作 子Tab：我的 / 共创 -->
+          <div id="rh-subtabs" class="flex items-center gap-6 px-8 py-2 text-sm bg-white/20" style="display:none">
+            <button id="rh-subtab-mine" onclick="switchRoleSubTab('mine')" class="text-sub transition-colors">我的<span id="rh-mine-count" class="text-xs text-sub">123</span></button>
+            <button id="rh-subtab-co" onclick="switchRoleSubTab('co')" class="font-bold text-ink transition-colors">共创<span id="rh-co-count" class="text-xs text-sub">345</span></button>
           </div>
           <!-- Tab 内容 -->
           <div id="rh-tabcontent" class="px-4 py-4 min-h-[240px] pb-4"></div>
@@ -248,8 +303,7 @@
             <span id="rh-star" class="text-2xl leading-none transition-all">☆</span>
             <span id="rh-star-txt" class="text-[10px] text-sub mt-0.5">加入角色库</span>
           </button>
-          <button onclick="track('publish_page_jump',{}); toast('跳转至发布页')" class="flex-1 py-3 rounded-btn anime-btn text-ink text-sm font-semibold shadow-soft">和TA共创</button>
-          <button id="rh-genbtn" onclick="genImage()" class="flex-1 py-3 rounded-btn anime-btn text-ink text-sm font-semibold shadow-soft">用TA生图</button>
+          <button id="rh-genbtn" onclick="genImage()" class="flex-1 py-3 rounded-btn anime-btn text-ink text-sm font-semibold shadow-soft">用TA创作</button>
         </div>
       </section>
 
@@ -450,7 +504,7 @@ function renderUserHomeGrid() {
     </div>`).join('');
   // 「去创建」占位卡（仅我的）
   if (userHomeTab === 'mine') {
-    html += `<button onclick="track('create_entry_click',{}); showStudio()" class="rounded-pop border-2 border-dashed border-brand/40 aspect-[3/4] flex flex-col items-center justify-center text-brand text-3xl bg-white/30 anime-card">+<span class="text-xs mt-1">去创建</span></button>`;
+    html += `<button onclick="track('create_entry_click',{}); showCreate()" class="rounded-pop border-2 border-dashed border-brand/40 aspect-[3/4] flex flex-col items-center justify-center text-brand text-3xl bg-white/30 anime-card">+<span class="text-xs mt-1">去创建</span></button>`;
   }
   grid.innerHTML = html;
   // 长按绑定
@@ -512,21 +566,73 @@ function removeRoleConfirm() {
 ============================================================ */
 function showStudio() {
   showScreen('screen-studio');
+  document.getElementById('studio-title').textContent = '工作室';
+  document.getElementById('studio-footer').style.display = 'flex';
   const grid = document.getElementById('studio-grid');
-  grid.innerHTML = Array.from({ length: 6 }).map(() =>
+  grid.innerHTML = Array.from({ length: 6 }).map((_, i) =>
     `<button onclick="track('studio_pick_image',{}); showCreate()" class="ph aspect-square rounded-pop soft-shadow"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg></button>`
   ).join('');
+}
+function showStudioForAvatar() {
+  showScreen('screen-studio');
+  const grid = document.getElementById('studio-grid');
+  grid.innerHTML = Array.from({ length: 6 }).map((_, i) =>
+    `<button onclick="track('studio_pick_image',{}); showCreate()" class="ph aspect-square rounded-pop soft-shadow"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg></button>`
+  ).join('');
+  document.getElementById('studio-title').textContent = '选择角色立绘';
+  document.getElementById('studio-footer').style.display = 'none';
+}
+function showStudioForSancan() {
+  showScreen('screen-studio');
+  const grid = document.getElementById('studio-grid');
+  grid.innerHTML = Array.from({ length: 6 }).map((_, i) =>
+    `<button onclick="track('studio_pick_image',{}); showCreate()" class="ph aspect-square rounded-pop soft-shadow"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg></button>`
+  ).join('');
+  document.getElementById('studio-title').textContent = '选择三视图图片';
+  document.getElementById('studio-footer').style.display = 'none';
+}
+let crImgCount = 0;
+function initCreateImgs() {
+  const grid = document.getElementById('cr-imgs');
+  let html = '';
+  for (let i = 0; i < crImgCount; i++) {
+    html += `<div class="ph aspect-square rounded-pop soft-shadow relative"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m4 17 5-5 5 5 2-2 4 4"/></svg><button onclick="removeCrImg(${i})" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">×</button></div>`;
+  }
+  if (crImgCount < 5) {
+    html += `<button onclick="addCrImg()" class="aspect-square rounded-pop border-2 border-dashed border-brand/40 flex flex-col items-center justify-center text-brand text-lg bg-white/30"><span>+</span></button>`;
+  }
+  grid.innerHTML = html;
+  document.getElementById('cr-img-count').textContent = crImgCount;
+}
+function addCrImg() {
+  if (crImgCount >= 5) return;
+  crImgCount++;
+  initCreateImgs();
+  toast('已添加图片');
+}
+function removeCrImg(i) {
+  crImgCount--;
+  initCreateImgs();
 }
 function showCreate() {
   showScreen('screen-create');
   track('role_create_click', {});
+  crImgCount = 0;
+  initCreateImgs();
+  document.getElementById('cr-name').value = '';
+  document.getElementById('cr-brief').value = '';
+  document.getElementById('cr-about').value = '';
+  document.getElementById('cr-count').textContent = '0';
+  document.getElementById('cr-cocreate').checked = true;
+  document.getElementById('cr-private').checked = false;
+  validateCreate();
 }
 function validateCreate() {
   const name = document.getElementById('cr-name').value.trim();
   const brief = document.getElementById('cr-brief').value.trim();
   const about = document.getElementById('cr-about').value;
   document.getElementById('cr-count').textContent = about.length;
-  const ok = name.length > 0 && brief.length >= 1 && brief.length <= 20 && about.length <= 120;
+  const ok = name.length > 0 && brief.length >= 1 && about.length <= 200;
   const btn = document.getElementById('cr-save');
   btn.disabled = !ok;
   btn.classList.toggle('opacity-50', !ok);
@@ -534,13 +640,14 @@ function validateCreate() {
 function submitCreate() {
   const name = document.getElementById('cr-name').value.trim();
   const brief = document.getElementById('cr-brief').value.trim();
-  const race = document.getElementById('cr-race').value.trim() || '猴子';
-  const birth = document.getElementById('cr-birth').value.trim() || '1月1日';
   const about = document.getElementById('cr-about').value.trim();
+  const coCreate = document.getElementById('cr-cocreate').checked;
+  const isPrivate = document.getElementById('cr-private').checked;
   if (!name || brief.length < 1) { track('role_create_fail', { reason: 'invalid' }); return; }
   Object.assign(state.role, {
-    name, brief, race, birthday: birth, about,
-    fans: 0, co: 0, heat: 0, likes: 0, liked: false, inLibrary: false, coCreateOpen: true,
+    name, brief, race: '', birthday: '', about,
+    coCreateOpen: coCreate,
+    fans: 0, co: 0, heat: 0, likes: 0, liked: false, inLibrary: false,
   });
   state.isNewRole = true;
   track('role_create_success', { name });
@@ -552,11 +659,12 @@ function submitCreate() {
    角色主页
 ============================================================ */
 let roleTab = 'co';
+let roleSubTab = 'co';
 function showRoleHome(source) {
   track('role_home_view', { role_id: state.role.id, source: source || '' });
   syncRoleHome();
   showScreen('screen-rolehome');
-  switchRoleTab(state.isNewRole ? 'co' : 'co');
+  switchRoleTab('co');
 }
 function syncRoleHome() {
   document.getElementById('rh-name').textContent = state.role.name;
@@ -574,19 +682,23 @@ function syncRoleHome() {
 }
 function switchRoleTab(tab) {
   roleTab = tab;
-  const map = { set: 'rh-tab-set', co: 'rh-tab-co', mine: 'rh-tab-mine' };
-  Object.entries(map).forEach(([k, id]) => {
-    document.getElementById(id).className = k === tab ? 'font-bold text-ink' : 'text-sub';
-  });
-  // 数量小字重新附加
+  document.getElementById('rh-tab-set').className = tab === 'set' ? 'flex-1 font-bold text-ink transition-colors' : 'flex-1 text-sub transition-colors';
+  document.getElementById('rh-tab-co').className = tab === 'co' ? 'flex-1 font-bold text-ink transition-colors' : 'flex-1 text-sub transition-colors';
+  document.getElementById('rh-subtabs').style.display = tab === 'co' ? 'flex' : 'none';
+  if (tab === 'co') {
+    switchRoleSubTab(roleSubTab);
+  } else {
+    renderRoleTabContent();
+  }
+}
+function switchRoleSubTab(sub) {
+  roleSubTab = sub;
   const coCount = state.isNewRole ? state.coWorks.length : 345;
   const mineCount = state.isNewRole ? state.myWorks.length : 123;
-  document.getElementById('rh-tab-co').innerHTML = '共创<span id="rh-co-count" class="text-xs text-sub">' + coCount + '</span>';
-  document.getElementById('rh-tab-mine').innerHTML = '我的<span id="rh-mine-count" class="text-xs text-sub">' + mineCount + '</span>';
-  document.getElementById('rh-tab-co').className = tab === 'co' ? 'font-bold text-ink' : 'text-sub';
-  document.getElementById('rh-tab-mine').className = tab === 'mine' ? 'font-bold text-ink' : 'text-sub';
-  document.getElementById('rh-tab-co').onclick = () => switchRoleTab('co');
-  document.getElementById('rh-tab-mine').onclick = () => switchRoleTab('mine');
+  document.getElementById('rh-subtab-mine').innerHTML = '我的<span id="rh-mine-count" class="text-xs text-sub">' + mineCount + '</span>';
+  document.getElementById('rh-subtab-co').innerHTML = '共创<span id="rh-co-count" class="text-xs text-sub">' + coCount + '</span>';
+  document.getElementById('rh-subtab-mine').className = sub === 'mine' ? 'font-bold text-ink transition-colors' : 'text-sub transition-colors';
+  document.getElementById('rh-subtab-co').className = sub === 'co' ? 'font-bold text-ink transition-colors' : 'text-sub transition-colors';
   renderRoleTabContent();
 }
 function renderRoleTabContent() {
@@ -602,9 +714,9 @@ function renderRoleTabContent() {
       </div>`;
     return;
   }
-  const works = roleTab === 'co' ? state.coWorks : state.myWorks;
+  const works = roleSubTab === 'co' ? state.coWorks : state.myWorks;
   if (!works.length) {
-    if (roleTab === 'co') {
+    if (roleSubTab === 'co') {
       box.innerHTML = `
         <div class="flex flex-col items-center pt-8 text-center">
           <p class="text-sm text-sub mb-4">角色暂无共创内容</p>
@@ -632,7 +744,7 @@ function renderRoleTabContent() {
       </div>
     </div>`).join('') + `</div>`;
   // 我的 Tab 长按编辑/删除
-  if (roleTab === 'mine') {
+  if (roleSubTab === 'mine') {
     box.querySelectorAll('.work-item').forEach(item => {
       bindLongPress(item, () => {
         actionPopup('lp-work', [
@@ -660,8 +772,8 @@ function deleteWork(id) {
 function statPop(type) {
   const name = state.role.name;
   if (type === 'fans') { track('stat_fans_click', {}); toast(`${wan(state.role.fans)}粉丝关注了"${name}"`); }
-  if (type === 'co') { track('stat_co_click', {}); toast(`${wan(state.role.co)}共创作品`); }
-  if (type === 'heat') { track('stat_heat_click', {}); toast(`"${name}"累计获得${wan(state.role.heat)}热度（热度=点赞+收藏+评论+转发+角色库加入数+角色卡点赞）`); }
+  if (type === 'co') { track('stat_co_click', {}); toast(`${wan(state.role.co)}创作作品`); }
+  if (type === 'heat') { track('stat_heat_click', {}); toast(`"${name}"累计获得${wan(state.role.heat)}热度`); }
 }
 
 /* 复制 ID */
@@ -715,11 +827,11 @@ function applyLibrary() {
 function applyGenButton() {
   const btn = document.getElementById('rh-genbtn');
   if (state.role.coCreateOpen) {
-    btn.textContent = '用TA生图';
+    btn.textContent = '用TA创作';
     btn.disabled = false;
     btn.className = 'flex-1 py-3 rounded-btn anime-btn text-ink text-sm font-semibold shadow-soft';
   } else {
-    btn.textContent = '暂不支持共创';
+    btn.textContent = '暂不支持创作';
     btn.disabled = true;
     btn.className = 'flex-1 py-3 rounded-btn bg-neutral-200/60 text-sub text-sm font-semibold';
   }
@@ -744,8 +856,7 @@ function openShare() {
   const actions = [
     { icon: '🔗', label: '复制链接', fn: `track('share_copy_link',{});toast('已复制链接')` },
     { icon: '⬇', label: '保存分享图', fn: `track('share_save_image',{});saveShareImage()` },
-    { icon: '✎', label: '修改设定', fn: `closeOverlay('share-sheet');track('edit_setting',{});showCreate()` },
-    { icon: '🖼', label: '编辑封面', fn: `closeOverlay('share-sheet');track('edit_cover',{});showStudioForCover()` },
+    { icon: '✎', label: '编辑角色', fn: `closeOverlay('share-sheet');track('edit_setting',{});showCreate()` },
     { icon: '⚠', label: '举报', fn: `track('report',{});toast('已提交举报','plain')` },
   ];
   const actHtml = actions.map(a => `
@@ -791,20 +902,51 @@ function permissionDialog() {
   track('role_cover_save', { result: 'fail' });
   confirmDialog({ title: '请开启相册权限', desc: '需要相册权限才能保存图片', cancelText: '取消', okText: '去开启', tone: 'green', onOk: () => { hasAlbumPermission = true; toast('权限已开启'); } });
 }
-/* 背景下拉放大（下拉至原图一半上限，即 1.5x） */
-(function initCoverZoom() {
-  const cover = document.getElementById('rh-cover');
-  let startY = 0, active = false;
-  cover.addEventListener('touchstart', e => { startY = e.touches[0].clientY; active = true; }, { passive: true });
-  cover.addEventListener('touchmove', e => {
-    if (!active) return;
-    const dy = e.touches[0].clientY - startY;
-    if (dy > 0) {
+/* 背景轮播 + 下拉放大（下拉至原图一半上限，即 1.5x） */
+let coverIdx = 0;
+const coverCount = 3;
+(function initCoverSwipeZoom() {
+  const wrap = document.getElementById('rh-cover-wrap');
+  const track = document.getElementById('rh-cover-track');
+  const dots = document.querySelectorAll('#rh-dots span');
+  let startX = 0, startY = 0, dx = 0, dy = 0, dragging = false, zooming = false, swiping = false;
+  const w = () => wrap.offsetWidth;
+  function setIdx(i) {
+    coverIdx = Math.max(0, Math.min(coverCount - 1, i));
+    track.style.transition = 'transform 0.2s ease';
+    track.style.transform = `translateX(-${coverIdx * w()}px)`;
+    dots.forEach((d, i) => { d.className = i === coverIdx ? 'w-1.5 h-1.5 rounded-full bg-white/80 transition-all' : 'w-1.5 h-1.5 rounded-full bg-white/40 transition-all'; });
+  }
+  wrap.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    dx = 0; dy = 0; dragging = true; zooming = false; swiping = false;
+    track.style.transition = 'none';
+  }, { passive: true });
+  wrap.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    dx = e.touches[0].clientX - startX;
+    dy = e.touches[0].clientY - startY;
+    if (!zooming && !swiping) {
+      if (Math.abs(dx) > Math.abs(dy)) swiping = true;
+      else if (dy > 0) zooming = true;
+    }
+    if (zooming) {
       const scale = Math.min(1.5, 1 + dy / 400);
-      cover.style.transform = `scale(${scale})`;
+      wrap.style.transform = `scale(${scale})`;
+    } else if (swiping) {
+      track.style.transform = `translateX(${-coverIdx * w() + dx}px)`;
     }
   }, { passive: true });
-  cover.addEventListener('touchend', () => { active = false; cover.style.transform = 'scale(1)'; });
+  wrap.addEventListener('touchend', () => {
+    if (!dragging) return;
+    dragging = false;
+    if (zooming) {
+      wrap.style.transform = 'scale(1)';
+    } else if (swiping) {
+      if (Math.abs(dx) > w() / 4) setIdx(coverIdx + (dx < 0 ? 1 : -1));
+      else setIdx(coverIdx);
+    }
+  });
 })();
 
 /* ============================================================
