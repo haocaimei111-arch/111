@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f8fc">
+  <title>社区视频交互原型</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="prototype-stage">
+    <section class="phone" aria-label="社区视频移动端原型">
+      <div class="status-bar" aria-hidden="true">
+        <span>9:41</span>
+        <span class="status-icons"><i data-lucide="signal"></i><b>5G</b><i data-lucide="battery-full"></i></span>
+      </div>
+      <div id="app" class="app-root"></div>
+    </section>
+
+    <aside class="state-panel" aria-label="原型当前状态">
+      <span class="eyebrow">PROTOTYPE STATE</span>
+      <strong id="state-title">首页 · 瀑布流</strong>
+      <dl id="state-list"></dl>
+    </aside>
+  </main>
+
+  <nav class="prototype-switcher" aria-label="原型方案切换">
+    <button type="button" data-prototype-action="prev" title="上一个方案" aria-label="上一个方案"><i data-lucide="chevron-left"></i></button>
+    <div>
+      <span>视觉方案</span>
+      <strong id="variant-label">A · 瀑布流</strong>
+    </div>
+    <button type="button" data-prototype-action="next" title="下一个方案" aria-label="下一个方案"><i data-lucide="chevron-right"></i></button>
+    <label>
+      <span>场景</span>
+      <select id="scenario-select" aria-label="切换原型场景">
+        <option value="normal">正常</option>
+        <option value="weak">弱网</option>
+        <option value="locked">禁止下载</option>
+        <option value="audit-fail">审核驳回</option>
+      </select>
+    </label>
+  </nav>
+
+  <script src="assets/lucide.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
